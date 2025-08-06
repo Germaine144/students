@@ -1,6 +1,8 @@
-https://students-git-main-germaine-umuhires-projects.vercel.app/
+🎓 https://students-git-main-germaine-umuhires-projects.vercel.app/
 
 This is the Frontend of the Student Management System built with Next.js (App Router), Tailwind CSS, TypeScript, and NextAuth. It supports both admin and student users, providing full authentication and role-based dashboards
+
+
 ![alt text](image.png)
 
 🚀 Features
