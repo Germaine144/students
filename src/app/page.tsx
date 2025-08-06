@@ -1,12 +1,34 @@
-"use client"; 
+"use client";
 
 import { useEffect, useRef } from 'react';
 import { useInView, animate } from 'framer-motion';
-import Link from 'next/link'; 
+import Link from 'next/link';
+import type { FC } from 'react'; // Import FC (Function Component) type
 
-// Reusable component for the animated number
-function AnimatedNumber({ to, decimals = 0, suffix = '' }) {
-  const ref = useRef(null);
+// --- Define Types for Component Props ---
+
+// Define the types for the AnimatedNumber component's props
+type AnimatedNumberProps = {
+  to: number;
+  decimals?: number; // Optional prop
+  suffix?: string;   // Optional prop
+};
+
+// Define the types for the FeatureCard component's props
+type FeatureCardProps = {
+  icon: string;
+  color: string;
+  title: string;
+  description: string;
+};
+
+
+// --- Reusable AnimatedNumber Component ---
+
+// Apply the types to the component function
+function AnimatedNumber({ to, decimals = 0, suffix = '' }: AnimatedNumberProps) {
+  // Add a specific type to the ref for better type safety
+  const ref = useRef<HTMLSpanElement | null>(null);
   const isInView = useInView(ref, { once: true });
 
   useEffect(() => {
@@ -25,19 +47,17 @@ function AnimatedNumber({ to, decimals = 0, suffix = '' }) {
   return <span ref={ref}>0{suffix}</span>;
 }
 
+
 // --- UI Section Components ---
 
-const Header = () => (
+const Header: FC = () => (
   <header className="bg-white border-b border-gray-200">
     <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-    
       <Link href="/" className="text-2xl font-bold text-blue-600">SMS</Link>
       <div className="flex items-center space-x-4">
-       
         <Link href="/login" className="px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
           Login
         </Link>
-      
         <Link href="/register" className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700">
           Register
         </Link>
@@ -46,7 +66,7 @@ const Header = () => (
   </header>
 );
 
-const Hero = () => (
+const Hero: FC = () => (
   <section className="bg-gray-50 text-center py-20 sm:py-24">
     <div className="container mx-auto px-6">
       <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900">
@@ -56,11 +76,9 @@ const Hero = () => (
         The all-in-one solution for managing student data efficiently.
       </p>
       <div className="mt-8 flex justify-center space-x-4">
-      
         <Link href="/register" className="px-6 py-3 text-base font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700">
           Get Started
         </Link>
-        
         <Link href="/#features" className="px-6 py-3 text-base font-semibold text-gray-800 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">
           Learn More
         </Link>
@@ -69,9 +87,8 @@ const Hero = () => (
   </section>
 );
 
-const Features = () => (
- 
-  <section id="features" className="py-16 sm:py-20 bg-gray-50"> 
+const Features: FC = () => (
+  <section id="features" className="py-16 sm:py-20 bg-gray-50">
     <div className="container mx-auto px-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <FeatureCard
@@ -103,7 +120,8 @@ const Features = () => (
   </section>
 );
 
-const FeatureCard = ({ icon, color, title, description }) => (
+// Apply the types to the FeatureCard component's props
+const FeatureCard: FC<FeatureCardProps> = ({ icon, color, title, description }) => (
   <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
     <div className={`text-2xl ${color}`}>
       <i className={`fas ${icon}`}></i>
@@ -113,7 +131,7 @@ const FeatureCard = ({ icon, color, title, description }) => (
   </div>
 );
 
-const Stats = () => (
+const Stats: FC = () => (
   <section className="py-16 sm:py-20 bg-gray-50">
     <div className="container mx-auto px-6">
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
@@ -146,7 +164,9 @@ const Stats = () => (
   </section>
 );
 
+
 // --- Main Page Component ---
+
 export default function HomePage() {
   return (
     <div className="bg-gray-50 min-h-screen">

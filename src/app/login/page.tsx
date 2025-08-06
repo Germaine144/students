@@ -5,6 +5,16 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { User } from 'lucide-react';
 
+// It's good practice to define the shape of your API responses
+type LoginApiResponse = {
+  token: string;
+  user: {
+    fullName: string;
+    role: 'admin' | 'student';
+  };
+  msg?: string; // Optional message property for errors
+};
+
 const LoginPage = () => {
   const [formData, setFormData] = useState({
     email: '',
@@ -35,36 +45,34 @@ const LoginPage = () => {
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
+      // Apply the type to the parsed JSON for better type safety
+      const data: LoginApiResponse = await response.json();
 
       if (!response.ok) {
         throw new Error(data.msg || 'Something went wrong');
       }
 
-      // --- START: UPDATED SUCCESS LOGIC ---
-
       setUserName(data.user?.fullName || 'User');
       setShowSuccess(true);
       
-      // Store BOTH the token and user info in localStorage
       if (data.token) {
         localStorage.setItem('token', data.token);
-        // We stringify the user object because localStorage can only store strings
         localStorage.setItem('user', JSON.stringify(data.user)); 
       }
       
-      // Conditional redirect based on the user's role
       const redirectPath = data.user.role === 'admin' ? '/admin-dashboard' : '/student-dashboard';
 
-      // Redirect after 2 seconds
       setTimeout(() => {
         router.push(redirectPath);
       }, 2000);
 
-      // --- END: UPDATED SUCCESS LOGIC ---
-
-    } catch (err: any) {
-      setError(err.message);
+    // --- FIX 1: Handle the catch block safely with 'unknown' ---
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -73,7 +81,6 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 relative">
       <div className="max-w-sm w-full">
-        {/* The rest of your form JSX remains the same, it is already perfect */}
         <div className="bg-blue-600 rounded-t-2xl shadow-lg">
           <div className="flex justify-center py-12">
             <User className="text-white h-16 w-16" strokeWidth={1.5} />
@@ -124,8 +131,9 @@ const LoginPage = () => {
                   {isLoading ? 'Logging In...' : 'Login'}
                 </button>
               </div>
+              {/* --- FIX 2: Replaced ' with &apos; to fix unescaped entity error --- */}
               <p className="text-center text-sm text-gray-500">
-                Don't have an account?{' '}
+                Don&apos;t have an account?{' '}
                 <Link href="/register" className="font-bold text-blue-600 hover:underline">
                   Sign Up
                 </Link>
