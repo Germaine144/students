@@ -5,21 +5,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { User } from 'lucide-react';
 
-// It's good practice to define the shape of your API responses
 type LoginApiResponse = {
   token: string;
-  user: {
-    fullName: string;
-    role: 'admin' | 'student';
-  };
-  msg?: string; // Optional message property for errors
+  user: { fullName: string; role: 'admin' | 'student'; };
+  msg?: string;
 };
 
 const LoginPage = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
+  const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -37,7 +30,8 @@ const LoginPage = () => {
     setError('');
 
     try {
-      const API_URL = 'http://localhost:5000/api/users/login';
+      // --- THIS LINE IS UPDATED ---
+      const API_URL = 'http://192.168.1.69:5000/api/users/login';
       
       const response = await fetch(API_URL, {
         method: 'POST',
@@ -45,7 +39,6 @@ const LoginPage = () => {
         body: JSON.stringify(formData),
       });
 
-      // Apply the type to the parsed JSON for better type safety
       const data: LoginApiResponse = await response.json();
 
       if (!response.ok) {
@@ -57,7 +50,7 @@ const LoginPage = () => {
       
       if (data.token) {
         localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user)); 
+        localStorage.setItem('user', JSON.stringify(data.user));
       }
       
       const redirectPath = data.user.role === 'admin' ? '/admin-dashboard' : '/student-dashboard';
@@ -66,7 +59,6 @@ const LoginPage = () => {
         router.push(redirectPath);
       }, 2000);
 
-    // --- FIX 1: Handle the catch block safely with 'unknown' ---
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -79,6 +71,7 @@ const LoginPage = () => {
   };
 
   return (
+    // ... The rest of your JSX for this page remains the same ...
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 relative">
       <div className="max-w-sm w-full">
         <div className="bg-blue-600 rounded-t-2xl shadow-lg">
@@ -90,50 +83,23 @@ const LoginPage = () => {
             <form onSubmit={handleSubmit} noValidate>
               {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
               <div className="mb-5">
-                <label className="block text-gray-800 text-sm font-bold mb-2" htmlFor="email">
-                  E-mail
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  placeholder="hello@dream.com"
-                  className="w-full px-4 py-3 border rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                />
+                <label className="block text-gray-800 text-sm font-bold mb-2" htmlFor="email">E-mail</label>
+                <input id="email" type="email" placeholder="hello@dream.com" className="w-full px-4 py-3 border rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600" value={formData.email} onChange={handleChange} required />
               </div>
               <div className="mb-6">
-                <label className="block text-gray-800 text-sm font-bold mb-2" htmlFor="password">
-                  Password
-                </label>
-                <input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••••"
-                  className="w-full px-4 py-3 border rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                />
+                <label className="block text-gray-800 text-sm font-bold mb-2" htmlFor="password">Password</label>
+                <input id="password" type="password" placeholder="••••••••••" className="w-full px-4 py-3 border rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600" value={formData.password} onChange={handleChange} required />
                 <div className="text-right mt-2">
-                  <Link href="#" className="text-xs text-gray-400 hover:text-blue-600 hover:underline transition-colors">
-                    Forgot Password?
-                  </Link>
+                  <Link href="#" className="text-xs text-gray-400 hover:text-blue-600 hover:underline">Forgot Password?</Link>
                 </div>
               </div>
               <div className="mb-6">
-                <button
-                  type="submit"
-                  className="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-blue-700 transition duration-300 ease-in-out disabled:bg-blue-300"
-                  disabled={isLoading}
-                >
+                <button type="submit" className="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-blue-700 disabled:bg-blue-300" disabled={isLoading}>
                   {isLoading ? 'Logging In...' : 'Login'}
                 </button>
               </div>
-              {/* --- FIX 2: Replaced ' with &apos; to fix unescaped entity error --- */}
               <p className="text-center text-sm text-gray-500">
-                Don&apos;t have an account?{' '}
+                Don't have an account?{' '}
                 <Link href="/register" className="font-bold text-blue-600 hover:underline">
                   Sign Up
                 </Link>
