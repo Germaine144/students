@@ -26,20 +26,14 @@
 // module.exports = router;
 
 
+// backend/routes/userRoutes.js
 const express = require('express');
 const router = express.Router();
-const { registerUser, loginUser, getAllUsers, deleteUser, updateUserRole, addUserByAdmin } = require('../controllers/userController');
+const { registerUser, loginUser, getMyProfile, updateMyProfile } = require('../controllers/userController');
 const { protect } = require('../middleware/authMiddleware');
-const { admin } = require('../middleware/adminMiddleware');
 
-// Public Routes
 router.post('/register', registerUser);
 router.post('/login', loginUser);
-
-// Admin-only Routes
-router.post('/add', protect, admin, addUserByAdmin);
-router.get('/', protect, admin, getAllUsers);
-router.delete('/:id', protect, admin, deleteUser);
-router.put('/:id/role', protect, admin, updateUserRole);
+router.route('/profile').get(protect, getMyProfile).put(protect, updateMyProfile);
 
 module.exports = router;

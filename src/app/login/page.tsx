@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { User } from 'lucide-react';
+import { User, X, AlertCircle } from 'lucide-react';
 
 type LoginApiResponse = {
   token: string;
@@ -14,6 +14,7 @@ type LoginApiResponse = {
 const LoginPage = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
+  const [showErrorModal, setShowErrorModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [userName, setUserName] = useState('');
@@ -28,9 +29,9 @@ const LoginPage = () => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
+    setShowErrorModal(false);
 
     try {
-      // --- THIS LINE IS UPDATED ---
       const API_URL = 'http://192.168.1.69:5000/api/users/login';
       
       const response = await fetch(API_URL, {
@@ -60,18 +61,27 @@ const LoginPage = () => {
       }, 2000);
 
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
+      // We check if the error is an "Invalid credentials" error.
+      // If so, we show a more helpful message.
+      if (err instanceof Error && err.message.toLowerCase().includes('invalid credentials')) {
+        setError('Email not found or password incorrect. Please try again or create an account.');
+      } else if (err instanceof Error) {
+        setError(err.message); // For other errors like "Failed to fetch"
       } else {
         setError('An unexpected error occurred. Please try again.');
       }
+      setShowErrorModal(true);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const closeErrorModal = () => {
+    setShowErrorModal(false);
+    setError('');
+  };
+
   return (
-    // ... The rest of your JSX for this page remains the same ...
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 relative">
       <div className="max-w-sm w-full">
         <div className="bg-blue-600 rounded-t-2xl shadow-lg">
@@ -81,7 +91,6 @@ const LoginPage = () => {
           <div className="bg-white px-8 pt-10 pb-8 rounded-tl-[3.5rem] rounded-b-2xl text-black">
             <h2 className="text-3xl font-bold text-center mb-8">Login</h2>
             <form onSubmit={handleSubmit} noValidate>
-              {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
               <div className="mb-5">
                 <label className="block text-gray-800 text-sm font-bold mb-2" htmlFor="email">E-mail</label>
                 <input id="email" type="email" placeholder="hello@dream.com" className="w-full px-4 py-3 border rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600" value={formData.email} onChange={handleChange} required />
@@ -90,7 +99,12 @@ const LoginPage = () => {
                 <label className="block text-gray-800 text-sm font-bold mb-2" htmlFor="password">Password</label>
                 <input id="password" type="password" placeholder="••••••••••" className="w-full px-4 py-3 border rounded-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600" value={formData.password} onChange={handleChange} required />
                 <div className="text-right mt-2">
-                  <Link href="#" className="text-xs text-gray-400 hover:text-blue-600 hover:underline">Forgot Password?</Link>
+                  <Link href="#" className="text-xs text-gray-400 hover:text-blue-600 hover:underline" onClick={(e) => {
+                    e.preventDefault();
+                    alert('Please contact your administrator to reset your password or use the default password provided when your account was created.');
+                  }}>
+                    Forgot Password?
+                  </Link>
                 </div>
               </div>
               <div className="mb-6">
@@ -108,10 +122,47 @@ const LoginPage = () => {
           </div>
         </div>
       </div>
-
-      {/* SUCCESS MODAL */}
-      {showSuccess && (
+      
+      {/* ERROR MODAL - Professional centered popup */}
+      {showErrorModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full mx-4 transform animate-pulse">
+            <div className="bg-red-500 rounded-t-2xl p-6 text-center relative">
+              <button
+                onClick={closeErrorModal}
+                className="absolute top-4 right-4 text-white hover:text-gray-200 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">
+                <AlertCircle className="w-8 h-8 text-red-500" />
+              </div>
+              <h2 className="text-white text-2xl font-bold">Login Failed</h2>
+            </div>
+            <div className="p-8 text-center bg-white rounded-b-2xl">
+              <p className="text-gray-700 text-lg mb-6 leading-relaxed">{error}</p>
+              <div className="flex flex-col space-y-3">
+                <button
+                  onClick={closeErrorModal}
+                  className="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-blue-700 transition-colors"
+                >
+                  Try Again
+                </button>
+                <Link
+                  href="/register"
+                  className="w-full bg-gray-100 text-gray-700 font-bold py-3 px-4 rounded-xl hover:bg-gray-200 transition-colors text-center block"
+                >
+                  Create Account
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* SUCCESS MODAL (Unchanged) */}
+      {showSuccess && (
+         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full mx-4 transform animate-pulse">
             <div className="bg-blue-600 rounded-t-2xl p-6 text-center">
               <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4">

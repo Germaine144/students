@@ -24,7 +24,7 @@
 
 // app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 
-
+// backend/server.js
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
@@ -34,16 +34,14 @@ dotenv.config();
 connectDB();
 
 const app = express();
-
 app.use(cors());
-app.use(express.json({ extended: false }));
+app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send('API is running...');
-});
+app.get('/', (req, res) => res.send('API is running...'));
 
+// Use both route files
 app.use('/api/users', require('./routes/userRoutes'));
+app.use('/api/admin', require('./routes/adminRoutes'));
 
 const PORT = process.env.PORT || 5000;
-
 app.listen(PORT, '0.0.0.0', () => console.log(`Server started on port ${PORT}`));

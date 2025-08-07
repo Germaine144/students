@@ -1,4 +1,4 @@
-"use client";
+ "use client";
 
 import React, { useState } from 'react';
 import Link from 'next/link';
@@ -30,6 +30,9 @@ const SignUpPage = () => {
       });
       const data = await response.json();
       if (!response.ok) {
+        if (data.msg && data.msg.includes('already exists')) {
+          throw new Error('An account with this email already exists. Please log in instead, or contact your administrator if you need access.');
+        }
         throw new Error(data.msg || 'Something went wrong');
       }
       setShowSuccess(true);
