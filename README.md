@@ -15,6 +15,9 @@ This is the Frontend of the Student Management System built with Next.js (App Ro
 
 ![alt text](image-1.png)
 
+AND ADMIN  DASHBOARD
+![alt text](image-2.png)
+
 🏗️ Tech Stack
 Tech	Description
 Next.js	React framework for SSR and routing
