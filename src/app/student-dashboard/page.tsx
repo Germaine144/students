@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { LogOut, User, Calendar, Camera, Edit, X, Heart } from 'lucide-react';
+import { LogOut, User, Calendar, Camera, Edit, Heart } from 'lucide-react';
 
 type StudentProfile = {
   _id: string;
