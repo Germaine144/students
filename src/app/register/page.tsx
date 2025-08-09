@@ -1,4 +1,6 @@
- "use client";
+// Assuming your file is located at something like 'app/signup/page.tsx' or 'pages/signup.tsx'
+
+"use client";
 
 import React, { useState } from 'react';
 import Link from 'next/link';
@@ -19,29 +21,50 @@ const SignUpPage = () => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
+
     try {
-      // --- THIS LINE IS UPDATED ---
-      const API_URL = 'http://192.168.1.69:5000/api/users/register';
+      // --- THIS IS THE KEY CHANGE ---
+      // 1. Get the base URL from the environment variable set in Vercel.
+      //    It MUST start with NEXT_PUBLIC_ to be accessible in the browser.
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+      // 2. Check if the variable is set. This helps with debugging.
+      if (!apiBaseUrl) {
+        throw new Error("API URL is not configured. Please contact the administrator.");
+      }
       
-      const response = await fetch(API_URL, {
+      // 3. Construct the full endpoint URL for the fetch request.
+      const endpoint = `${apiBaseUrl}/api/users/register`;
+      
+      const response = await fetch(endpoint, { // Use the dynamically created endpoint URL
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
+
+      // --- The rest of the function remains the same ---
       const data = await response.json();
       if (!response.ok) {
         if (data.msg && data.msg.includes('already exists')) {
-          throw new Error('An account with this email already exists. Please log in instead, or contact your administrator if you need access.');
+          throw new Error('An account with this email already exists. Please log in instead.');
         }
         throw new Error(data.msg || 'Something went wrong');
       }
+
       setShowSuccess(true);
       setTimeout(() => {
         router.push('/login');
       }, 3000);
+
     } catch (err: unknown) {
+      console.error("Registration failed:", err); // Log the real error for debugging
       if (err instanceof Error) {
-        setError(err.message);
+        // Provide a user-friendly error message
+        if (err.message.includes('fetch')) {
+             setError('Could not connect to the server. Please try again later.');
+        } else {
+             setError(err.message);
+        }
       } else {
         setError('An unexpected registration error occurred.');
       }
@@ -51,7 +74,6 @@ const SignUpPage = () => {
   };
 
   return (
-    // ... The rest of your JSX for this page remains the same ...
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4 relative">
         <div className="max-w-sm w-full">
             <div className="bg-blue-600 rounded-t-2xl shadow-lg">

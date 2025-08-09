@@ -3,18 +3,15 @@
 import { useEffect, useRef } from 'react';
 import { useInView, animate } from 'framer-motion';
 import Link from 'next/link';
-import type { FC } from 'react'; // Import FC (Function Component) type
+import type { FC } from 'react'; 
 
-// --- Define Types for Component Props ---
-
-// Define the types for the AnimatedNumber component's props
 type AnimatedNumberProps = {
   to: number;
-  decimals?: number; // Optional prop
-  suffix?: string;   // Optional prop
+  decimals?: number; 
+  suffix?: string;   
 };
 
-// Define the types for the FeatureCard component's props
+
 type FeatureCardProps = {
   icon: string;
   color: string;
@@ -22,12 +19,8 @@ type FeatureCardProps = {
   description: string;
 };
 
-
-// --- Reusable AnimatedNumber Component ---
-
-// Apply the types to the component function
 function AnimatedNumber({ to, decimals = 0, suffix = '' }: AnimatedNumberProps) {
-  // Add a specific type to the ref for better type safety
+ 
   const ref = useRef<HTMLSpanElement | null>(null);
   const isInView = useInView(ref, { once: true });
 
@@ -47,8 +40,6 @@ function AnimatedNumber({ to, decimals = 0, suffix = '' }: AnimatedNumberProps) 
   return <span ref={ref}>0{suffix}</span>;
 }
 
-
-// --- UI Section Components ---
 
 const Header: FC = () => (
   <header className="bg-white border-b border-gray-200">

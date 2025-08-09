@@ -1,3 +1,5 @@
+// Assuming your file is located at something like 'app/login/page.tsx' or 'pages/login.tsx'
+
 "use client";
 
 import React, { useState } from 'react';
@@ -32,14 +34,25 @@ const LoginPage = () => {
     setShowErrorModal(false);
 
     try {
-      const API_URL = 'http://192.168.1.69:5000/api/users/login';
+      // --- THIS IS THE KEY CHANGE ---
+      // 1. Get the base URL from the environment variable set in Vercel.
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+      // 2. Check if the variable is set to help with debugging.
+      if (!apiBaseUrl) {
+        throw new Error("API URL is not configured. Please contact the administrator.");
+      }
+
+      // 3. Construct the full, dynamic endpoint URL for the login request.
+      const endpoint = `${apiBaseUrl}/api/users/login`;
       
-      const response = await fetch(API_URL, {
+      const response = await fetch(endpoint, { // Use the dynamically created endpoint
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
+      // --- The rest of the function remains the same ---
       const data: LoginApiResponse = await response.json();
 
       if (!response.ok) {
@@ -61,12 +74,16 @@ const LoginPage = () => {
       }, 2000);
 
     } catch (err: unknown) {
-      // We check if the error is an "Invalid credentials" error.
-      // If so, we show a more helpful message.
+      console.error("Login failed:", err); // Log the real error for debugging
       if (err instanceof Error && err.message.toLowerCase().includes('invalid credentials')) {
         setError('Email not found or password incorrect. Please try again or create an account.');
       } else if (err instanceof Error) {
-        setError(err.message); // For other errors like "Failed to fetch"
+        // Provide a user-friendly message for fetch errors
+        if (err.message.includes('fetch')) {
+          setError('Could not connect to the server. Please try again later.');
+        } else {
+          setError(err.message);
+        }
       } else {
         setError('An unexpected error occurred. Please try again.');
       }
@@ -123,7 +140,7 @@ const LoginPage = () => {
         </div>
       </div>
       
-      {/* ERROR MODAL - Professional centered popup */}
+      {/* ERROR MODAL */}
       {showErrorModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full mx-4 transform animate-pulse">
@@ -160,7 +177,7 @@ const LoginPage = () => {
         </div>
       )}
       
-      {/* SUCCESS MODAL (Unchanged) */}
+      {/* SUCCESS MODAL */}
       {showSuccess && (
          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full mx-4 transform animate-pulse">

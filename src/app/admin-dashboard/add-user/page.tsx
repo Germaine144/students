@@ -3,9 +3,9 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { UserPlus, Mail, Phone, BookOpen, Briefcase, User as UserIcon, Camera, Lock, CheckCircle } from 'lucide-react';
+import { UserPlus, Mail, Phone, BookOpen, Briefcase, User as UserIcon, Lock, CheckCircle } from 'lucide-react';
 
-// Helper component for styled input fields (no changes needed here)
+// Helper component for styled input fields
 type InputFieldProps = {
   label: string;
   name: string;
@@ -34,14 +34,12 @@ const AddUserPage = () => {
     phoneNumber: '',
     role: 'student',
     courseOfStudy: '',
-    password: 'password123', // A clear, simple default password
+    password: 'password123',
     status: 'Active',
-    enrollmentYear: new Date().getFullYear().toString(), // Added enrollment year
+    enrollmentYear: new Date().getFullYear().toString(),
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
-  // --- NEW: State to control the success modal ---
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -57,7 +55,17 @@ const AddUserPage = () => {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('Authentication error. Please log in again.');
       
-      const response = await fetch('http://localhost:5000/api/admin/users', {
+      // --- THIS IS THE KEY CHANGE ---
+      // 1. Get the base URL from the environment variable.
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+      if (!apiBaseUrl) {
+        throw new Error("API URL is not configured. Please contact the administrator.");
+      }
+
+      // 2. Construct the full, dynamic endpoint URL.
+      const endpoint = `${apiBaseUrl}/api/admin/users`;
+      
+      const response = await fetch(endpoint, { // Use the dynamic endpoint
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(formData),
@@ -66,9 +74,7 @@ const AddUserPage = () => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.msg || 'Failed to add user');
 
-      // --- NEW: On success, show the modal instead of redirecting ---
       setShowSuccessModal(true);
-      // We no longer redirect immediately: router.push('/admin-dashboard');
 
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -80,6 +86,9 @@ const AddUserPage = () => {
       setIsLoading(false);
     }
   };
+
+  // --- The rest of your component's JSX remains exactly the same ---
+  // (No changes needed below this line)
 
   return (
     <div className="min-h-screen bg-gray-100 p-8 text-black">
@@ -109,9 +118,10 @@ const AddUserPage = () => {
                 <div className="relative"><Briefcase size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" /><select name="role" value={formData.role} onChange={handleChange} className="pl-9 w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"><option value="student">Student</option><option value="admin">Admin</option></select></div>
               </div>
 
+              {/* Profile picture upload functionality is visual only in this example */}
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Profile Picture (Optional)</label>
-                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md cursor-pointer hover:border-blue-500"><div className="space-y-1 text-center"><Camera size={48} className="mx-auto text-gray-400" /><p className="text-sm text-gray-600"><span className="font-semibold text-blue-600">Click to upload image</span></p><p className="text-xs text-gray-500">PNG, JPG, GIF up to 5MB</p></div></div>
+                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md cursor-pointer hover:border-blue-500"><div className="space-y-1 text-center"><UserIcon size={48} className="mx-auto text-gray-400" /><p className="text-sm text-gray-600"><span className="font-semibold text-blue-600">Click to upload image</span></p><p className="text-xs text-gray-500">PNG, JPG, GIF up to 5MB</p></div></div>
               </div>
             </div>
 
@@ -131,7 +141,6 @@ const AddUserPage = () => {
         </div>
       </div>
 
-      {/* --- NEW: Success Modal --- */}
       {showSuccessModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-2xl max-w-md w-full text-center">
