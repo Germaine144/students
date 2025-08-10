@@ -1,12 +1,11 @@
-// app/layout.tsx
-
-import type { Metadata } from "next"; // It's good practice to import the Metadata type
+import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Navbar from "./components/Navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = { // Using the imported Metadata type
+export const metadata: Metadata = {
   title: "Student Management System",
   description: "The all-in-one solution for managing student data efficiently.",
 };
@@ -27,7 +26,10 @@ export default function RootLayout({
           referrerPolicy="no-referrer"
         />
       </head>
-      <body className={inter.className}>{children}</body>
+      <body className={`${inter.className} bg-gray-50`}>
+        <Navbar />
+        <main>{children}</main>
+      </body>
     </html>
   );
 }

@@ -5,22 +5,14 @@ import { useInView, animate } from 'framer-motion';
 import Link from 'next/link';
 import type { FC } from 'react'; 
 
+// --- AnimatedNumber Component ---
 type AnimatedNumberProps = {
   to: number;
   decimals?: number; 
   suffix?: string;   
 };
 
-
-type FeatureCardProps = {
-  icon: string;
-  color: string;
-  title: string;
-  description: string;
-};
-
 function AnimatedNumber({ to, decimals = 0, suffix = '' }: AnimatedNumberProps) {
- 
   const ref = useRef<HTMLSpanElement | null>(null);
   const isInView = useInView(ref, { once: true });
 
@@ -40,25 +32,18 @@ function AnimatedNumber({ to, decimals = 0, suffix = '' }: AnimatedNumberProps) 
   return <span ref={ref}>0{suffix}</span>;
 }
 
+// --- FeatureCard Type Definition ---
+type FeatureCardProps = {
+  icon: string;
+  color: string;
+  title: string;
+  description: string;
+};
 
-const Header: FC = () => (
-  <header className="bg-white border-b border-gray-200">
-    <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-      <Link href="/" className="text-2xl font-bold text-blue-600">SMS</Link>
-      <div className="flex items-center space-x-4">
-        <Link href="/login" className="px-4 py-2 text-sm font-semibold text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50">
-          Login
-        </Link>
-        <Link href="/register" className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700">
-          Register
-        </Link>
-      </div>
-    </div>
-  </header>
-);
+// --- Page Section Components (RESTORED) ---
 
 const Hero: FC = () => (
-  <section className="bg-gray-50 text-center py-20 sm:py-24">
+  <section className="bg-white text-center py-20 sm:py-24">
     <div className="container mx-auto px-6">
       <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900">
         Welcome to the Student Management System
@@ -79,7 +64,7 @@ const Hero: FC = () => (
 );
 
 const Features: FC = () => (
-  <section id="features" className="py-16 sm:py-20 bg-gray-50">
+  <section id="features" className="py-16 sm:py-20 bg-white">
     <div className="container mx-auto px-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <FeatureCard
@@ -111,10 +96,9 @@ const Features: FC = () => (
   </section>
 );
 
-// Apply the types to the FeatureCard component's props
 const FeatureCard: FC<FeatureCardProps> = ({ icon, color, title, description }) => (
-  <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
-    <div className={`text-2xl ${color}`}>
+  <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-sm text-center">
+    <div className={`text-3xl ${color} inline-block`}>
       <i className={`fas ${icon}`}></i>
     </div>
     <h3 className="mt-4 text-lg font-semibold text-gray-900">{title}</h3>
@@ -123,7 +107,7 @@ const FeatureCard: FC<FeatureCardProps> = ({ icon, color, title, description }) 
 );
 
 const Stats: FC = () => (
-  <section className="py-16 sm:py-20 bg-gray-50">
+  <section className="py-16 sm:py-20 bg-white">
     <div className="container mx-auto px-6">
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
         <div className="p-4">
@@ -155,18 +139,14 @@ const Stats: FC = () => (
   </section>
 );
 
-
 // --- Main Page Component ---
-
+// This part is now very clean. It just assembles the sections.
 export default function HomePage() {
   return (
-    <div className="bg-gray-50 min-h-screen">
-      <Header />
-      <main>
-        <Hero />
-        <Features />
-        <Stats />
-      </main>
-    </div>
+    <>
+      <Hero />
+      <Features />
+      <Stats />
+    </>
   );
 }

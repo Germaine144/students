@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { LogOut, User, Calendar, Camera, Edit, Heart } from 'lucide-react';
+// The unused 'LogOut' import has been removed from this line
+import { User, Calendar, Camera, Edit, Heart } from 'lucide-react';
 
 type StudentProfile = {
   _id: string;
@@ -39,12 +40,15 @@ const StudentDashboard = () => {
   ];
 
   const getRandomMotivationalMessage = () => motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
-  const handleLogoutClick = () => setShowMotivationModal(true);
+  
+  // The unused handleLogoutClick function has been removed
+  
   const handleLogout = useCallback(() => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     router.push('/login');
   }, [router]);
+
   const confirmLogout = () => {
     setShowMotivationModal(false);
     handleLogout();
@@ -58,12 +62,10 @@ const StudentDashboard = () => {
         return;
       }
       
-      // --- THIS IS THE FIRST KEY CHANGE ---
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
-      if (!apiBaseUrl) throw new Error("API URL is not configured.");
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || '';
       const endpoint = `${apiBaseUrl}/api/users/profile`;
 
-      const response = await fetch(endpoint, { // Use the dynamic endpoint
+      const response = await fetch(endpoint, {
         headers: { 'Authorization': `Bearer ${token}` },
       });
 
@@ -124,12 +126,10 @@ const StudentDashboard = () => {
     try {
       const token = localStorage.getItem('token');
 
-      // --- THIS IS THE SECOND KEY CHANGE ---
-      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL;
-      if (!apiBaseUrl) throw new Error("API URL is not configured.");
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || '';
       const endpoint = `${apiBaseUrl}/api/users/profile`;
       
-      const response = await fetch(endpoint, { // Use the dynamic endpoint
+      const response = await fetch(endpoint, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(formData),
@@ -152,9 +152,6 @@ const StudentDashboard = () => {
       setIsLoading(false);
     }
   };
-
-  // --- The rest of your component's JSX remains exactly the same ---
-  // (No changes needed below this line)
 
   if (isLoading) {
     return (
@@ -198,6 +195,8 @@ const StudentDashboard = () => {
         </div>
       )}
 
+      {/* The old header is still commented out, which is fine. */}
+      {/* 
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-blue-600">SMS</h1>
@@ -209,7 +208,8 @@ const StudentDashboard = () => {
             </button>
           </div>
         </div>
-      </header>
+      </header> 
+      */}
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
