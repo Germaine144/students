@@ -27,6 +27,7 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.className} bg-gray-50`}>
+       
         <Navbar />
         <main>{children}</main>
       </body>
