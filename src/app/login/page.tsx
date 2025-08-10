@@ -87,15 +87,15 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* ATTRACTIVE ANIMATED BACKGROUND */}
+    
       <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
-        {/* Floating geometric shapes */}
+       
         <div className="absolute top-20 left-10 w-20 h-20 bg-blue-500 rounded-full opacity-20 animate-pulse"></div>
         <div className="absolute top-40 right-20 w-16 h-16 bg-purple-500 rounded-lg rotate-45 opacity-30 animate-bounce"></div>
         <div className="absolute bottom-32 left-20 w-12 h-12 bg-indigo-400 rounded-full opacity-25 animate-pulse" style={{animationDelay: '1s'}}></div>
         <div className="absolute bottom-20 right-32 w-14 h-14 bg-blue-400 rounded-lg opacity-20 animate-bounce" style={{animationDelay: '0.5s'}}></div>
         
-        {/* Floating icons */}
+      
         <div className="absolute top-32 right-40 text-blue-300 opacity-30 animate-float">
           <BookOpen size={32} />
         </div>
